@@ -1,0 +1,576 @@
+Luego de la Especificacion de Programas se crearan en el directorio de
+produccion archivos con las siguientes extenciones:
+
+    ?<Nombre_Objeto>.RPG -> fuentes RPG.
+    ?<Nombre_Objeto>.DDS -> fuentes de pantallas (si existe).
+    ?<Nombre_Objeto>.BAT ->
+    ?<Nombre_Objeto>.CLP ->
+
+Los archivos generados tienen un primer caracter en el nombre segun el
+objeto que los haya generado:
+
+    F -> para los procedimientos y reportes.
+    E -> para los work panels.
+      -> para las transacciones.
+
+Para llevar los archivos generados en la PC a la AS400 hay que seguir proceder
+de la siguiente manera:
+
+1.  Encontrar el Archivo R.BAT: Este contiene instrucciones para copiar todos
+    los archivos generados para el objeto de interes, ademas, del ejecutable
+    GXTFF.EXE
+
+2.  Ejecutar el R.BAT en la PC: Usando como parametro para este el nombre del
+    objeto que se quiere exportar.
+
+    Ejemplo: Se tiene un Objeto GeneXus, "Prueba" (este podria ser cualquier
+    tipo de objeto GeneXus) el cual se acaba de especificar y se desea poner
+    en produccion en la AS400.
+
+        R PRUEBA <ÄÙ -> Con lo cual se copiaran al diskette los ?PRUEBA.*
+                        mas el GXTFF.EXE.
+    En general:
+        R <Nombre_Objeto> <ÄÙ
+
+3.  Una vez conectados atravez de una PC con la AS400, se deben ejecutar las
+    siguientes instrucciones.
+
+    1.  Ejecutar el: STARTPCS
+    2.  Ejecutar el: STF 2.
+    3.  Ejecutar el: ?<Nombre_Objeto>.BAT del disquete
+
+COMANDOS DEL SQL400:
+1.  SELECT: Consulta datos de tablas.
+    Ejemplo:
+    .  SELECT * FROM BANTOT_DB/FSD311 X WHERE NOT EXISTS
+        (SELECT * FROM BANTOT_DB/FSD311 Y WHERE X.HCTA = Y.LICTA1 AND Y.LIEXCEP = 2)
+2.  UPDATE: Actualizar datos de una tabla.
+    Ejemplo:
+    UPDATE BANTOT_DB/FSH005 SET COFDES = '19960603' WHERE COFDES = '19960611'
+
+3.  UPDATE BT2DB/FSD011 X
+    SET SCSTAT = 12
+    WHERE SCMOD = 20 AND SCSTAT = 3 AND EXISTS (SELECT * FROM BT2DB/FSD008 Y
+    WHERE X.SCCTA = Y.CTNRO AND CTEJCT = 90 )
+4.  UPDATE: Actualizar datos de un campo desde otro campo de la tabla
+    UPDATE bak310510/fsd011 x                                          
+    SET x.scfval = (SELECT y.scfval FROM bak270510/fsd011 y            
+                    WHERE x.scmda=y.scmda AND x.scsuc=y.scsuc AND x.sccta=y.sccta      
+                    AND x.scoper=y.scoper AND x.scsbop=y.scsbop AND x.sctope=y.sctope  
+                    AND y.scrub=26500250)                                              
+    WHERE x.scrub=26500258 AND EXISTS(SELECT * FROM bak270510/fsd011 y 
+                    WHERE x.scmda=y.scmda AND x.scsuc=y.scsuc AND x.sccta=y.sccta      
+                    AND x.scoper=y.scoper AND x.scsbop=y.scsbop AND x.sctope=y.sctope  
+                    AND y.scrub=26500250)                                              
+5.  DELETE: Eliminar registros de una tabla.
+    Ejemplo:
+    .  DELETE FROM BANTOT_DB/FSD311 X WHERE NOT EXISTS
+         (SELECT * FROM BANTOT_DB/FSD311 Y WHERE X.HCTA = Y.LICTA1 AND Y.LIEXCEP = 2)
+
+    .  INSERT INTO bt2db/fsr111 (SELECT * FROM bak270706/fsr111 x          
+          WHERE (inscod=5 or inscod=55) and x.i1cta<>378158 and not           
+          EXISTS (SELECT * FROM bt2db/fsr111 y WHERE x.i1cod=y.i1cod and 
+           x.i1mod=y.i1mod and x.i1suc=y.i1suc and x.i1mda=y.i1mda and 
+           x.i1cta=y.i1cta and x.i1oper=y.i1oper and x.i1sbop=y.i1sbop and 
+           x.i1tope=y.i1tope and x.inscod=y.inscod ))                                        
+
+    .  UPDATE TARPROVI/XFSR111113 SET R111CO = 'N' WHERE 
+          EXISTS (SELECT *FROM BT2DB/FSD009 WHERE I1CTA=CTNRO AND GRNRO=113)
+
+COMANDOS OS400:
+1.  GO CMD!!!: Ayuda del comando referido en !!!.
+    !!! = DLT   -> Borrar.
+        = CRT   -> Crear.
+        = PF    -> Archivo Fisico.
+        = LF    -> Archivo Logico.
+        = JOB   -> Tarea/Trabajo.
+        = PRT   -> Impresoras.
+        = DKT   -> Diskettera.
+        = TAP   -> Cinta.
+        = CHG   -> Cambiar.
+        = RUN   -> Ejecutar.
+
+2.  Para trabajar con el spool:
+    .   Desde la linea de comandos: WRKSPLF <ÄÄÙ
+	     
+    .   Desde la peticion de sistema:
+        1.  3 <ÄÄÙ
+        2.  F10.
+WRKSPLF SELECT(WGAONAE) --> ver trabajo de otro usuario
+
+3.  WRKACTJOB: Solo los trabajos activos del usuario.
+
+4.  WRKUSRJOB: Todos los trabajos del usuario.
+
+5.  CALL PGM(PINFCM6) PARAM( ):
+
+6.  EDTLIBL: Editar la lista de bibliotecas. 
+
+7.  WRKOBJ: Trabajar con objetos.
+
+8.  WRKSPLF: Trabajar con el archivo de Spool.
+VISUALIZAR MENSAJES DEL SPOOL
+
+9.  WRKSBMJOB: Trabajar con tareas sometidas.
+PERMITE CONTINUAR TRABAJANDO POR ARRIBA, MIENTRAS POR DEBAJO CONTINUA TRABAJANDO
+
+10. DSPMSG: Despliega los mensajes al usuario.
+
+11. RCLRSC *CALLER: Libera o desbloquea los programas que ya no estan activos.
+
+12. WRKOBJPDM: Trabajar con objetos usando PDM.
+
+13. RUNQRY: Ejecuta una consulta sobre una tabla
+
+14. WRKOBJLCK: Trabajar con objetos bloqueados
+    Ejemplo:
+    WRKOBJLCK OBJ(BANTOT_TR/BSH400) OBJTYPE(*FILE)
+
+15. DSPOBJD: Visualizar Descripcion de Objeto.
+
+16. DSPDBR: Despliega la relacion de un fisico con sus logicos
+Relacion entre los Indices VERIFICAR INDICES DE ORIGEN
+
+17. UPDDTA: Modificar datos de archivos.
+
+18. DSPFD: Visualizar informacion de un archivo
+
+19. DSPFFD: Visualizar informacion y estructura de campos de un archivo fisico.
+
+20. CPYSPLF: Copiar un archivo del spool a un archivo fisico.
+    Ejemplo:
+    CPYSPLF FILE(QPRINT15) TOFILE(TNK_DB/RFS99022)
+	JOB(108593/BELOTTOA/DSPCURSO) SPLNBR(5)
+
+21. CRTPF: Crear un archivo fisico.
+    Ejemplo:
+    CRTPF FILE(TNK_DB/RFS99022) RCDLEN(200)
+
+22. DLTF: Eliminar un archivo.
+
+23. OVRPRTF: Crear/Cambiar archivo de definicion de impresion.
+    Ejemplo:
+    OVRPRTF FILE(*PRTF) PAGESIZE(72 250) LPI(6) CPI(15)
+
+24. DLTOVR
+    Ejemplo:
+    DLTOVR *ALL | *PRTF
+
+25. CPYTOPCD: Copia un archivo del AS400 a una carpeta compartida en PC.
+    Ejemplo:
+    CPYTOPCD FROMFILE(TINKE/PEXCT30C) TOFLR('BCP')
+
+26. CHGUSRPRF: Cambiar el Perfil del Usuario.
+    Ejemplo:
+    CHGUSRPRF
+
+27. DSPPFM: Despliega el miembro fuente de un archivo.
+
+ADEMAS DE SUS ARCHIVOS FISICOS 
+    Ejemplo:
+    DSPPFM FILE(BANTOT/QCLSRC) MBR(XCRESDOSUC)
+	CANTIDAd DE REGISTROS
+
+28. RSTLIB: Restaura una biblioteca salvada con SAVLIB
+    Ejemplo:
+    RSTLIB SAVLIB(BANTOT_DB) DEV(TAP01) RSTLIB(ABRIL96)
+
+29. SAVLIB: Salvar una biblioteca.
+    Ejemplo:
+    SAVLIB
+
+30. RSTOBJ: Restaur los objetos de una biblioteca salvada con SAVOBJ
+    Ejemplo:
+    RSTOBJ
+
+    RSTOBJ OBJ(PFS88042) SAVLIB(BTICM_CP) DEV(*SAVF) SAVF(XXARCH/PASOSAVF)
+        MBROPT(*ALL) ALWOBJDIF(*ALL) RESTLIB(TNK_CP)
+
+31. SAVOBJ: Salvar los objetos de una biblioteca.
+    Ejemplo:
+    SAVOBJ
+
+    SAVOBJ OBJ(FSH011*) LIB(TNK_DB) DEV(*SAVF) SAVF(XXARCH/PASOSAVF)
+        TGTRLS(*PRV)
+
+32. WRKUSRPRF: Ver el perfil del usuario.
+
+33. WRKJOBD: Para modificar la lista de bibliotecas del trabajo.
+
+34. STRJRNPF: Registrar por diario un archivo Fisico y sus Logicos
+    Ejemplo:
+    STRJRNPF FILE(BANTOT_TD/FST900) JRN(BANTOT_DB/QSQJRN)
+
+35. CHGJOB: Cambiar Trabajo
+    Ejemplo:
+    CHGJOB DATE('311296')
+
+36. RTVDDSSRC: Recuperar el fuente de definicion de un Fisico/Logico .
+    Ejemplo:
+    TRVDDSSRC OBJFILE(BANTOT_DB/FSE013) SRCFILE(BANTOT_DB/QDDSSRC)
+
+37. RTVCLSRC: Recuperar el fuente de definicion de un Cl.
+    Ejemplo:
+    TRVCLSRC PGM(BANTOT/PFS99P10) SRCFILE(BANTOT/QCLSRC)
+
+38. CRTDTAARA: Crear un area de datos en el sistema operativo.
+    Ejemplo:
+    CRTDTAARA DTAARA(BTRPG_CP/TINKE) TYPE(*CHAR) LEN(15) VALUE(MAURICIO)
+
+39. CHGDTAARA: Cambiar el valor un area de datos en el sistema operativo.
+    Ejemplo:
+    CHGDTAARA DTAARA(BTRPG_CP/TINKE) VALUE(MAURICIO JESUS)
+
+40. DSPDTAARA: Despliega el valor un area de datos en el sistema operativo.
+    Ejemplo:
+    DSPDTAARA DTAARA(BTRPG_CP/TINKE)
+
+41. DLTDTAARA: Elimina un area de datos en el sistema operativo.
+    Ejemplo:
+    DLTDTAARA DTAARA(BTRPG_CP/TINKE)
+
+42. CRTJOBD: Crear una descripcion de trabajos para asignarle a un usuario.
+    Ejemplo:
+    CRTJOBD JOBD(QGPL/BANTOTALJD) INLLIBL(BANT_CP COMEXW BANTOTAL ...)
+
+43. WRKJOBD: Trabajar con Descripciones de Trabajos
+    Ejemplo:
+    CRTJOBD JOBD(QGPL/BANTOTALJD) INLLIBL(BANT_CP COMEXW BANTOTAL ...)
+
+44. WRKUSRPRF: Trabajar con el perfil de un usuario.
+    Ejemplo:
+    WRKUSRPRF USRPRT(QSECOFR)
+
+45. DSPMSG: Despliega los mensajes del AS.
+    Ejemplo:
+    DSPMSG MSGQ(TINKE)
+
+46. ADDLIBLE: A¤adir biblioteca a la lista de bibliotecas
+    Ejemplo:
+    ADDLIBLE LIB(BTRPG_CP)
+
+47. CHGPRTF: Cambiar Archivo de Impresora
+    Ejemplo:
+    CHGPRTF FILE(QPRINT15)
+        CGI001I1
+        GRADO DE ROTACION DE LA PAGINA = 0
+
+48. SNDNETF: Enviar Archivo Via Red
+    Ejemplo:
+    SNDNETF FILE(XXARCH/PASOSAVF) TOUSRID((SUELI CENTRAL))
+
+49. RCVNETF: Recibir Archivos Via Red
+    Ejemplo:
+    RCVNETF FROMFILE(PASOSAVF) TOFILE(XXARCH/*FROMFILE) USER(TRAPANI)
+
+50. WRKNETF: Trabajar con Archivos de Red
+    Ejemplo:
+    WRKNETF
+
+51. CLRPFM: Limpia un Archivo Fisico. VACIA LA TABLA SIN DEJAR RASTRO vacia la tabla 
+    Ejemplo:
+    CLRPFM FILE(TITPAR)
+
+52. CRTLIB: Crear Biblioteca.
+
+CRTDUPOBJ: COPIA TODO LOS FISICOS Y LOGICOS DE LAS TABLAS.
+
+53. CLRLIB: Limpiar Biblioteca.
+
+54. DSPLOG:
+
+55. WRKMSGF: Trabajar con Archivos de Mensajes.
+    Ejemplo:
+    WRKMSGF MSGF(FNCMSG)
+
+56. CHGDSPF: Cambiar Archivo de Pantalla.
+    EJEMPLO:
+    CHGDSPF FILE(FSRH051S)
+
+57. WRKSYSVAL: Trabajar con las Variables del sistema.
+    Ejemplo:
+    WRKSYSVAL QTIME
+
+58. DSPFSD: Despliega descripcion del archivo.
+    Ejemplo:
+
+59. FMTDSPJRN1: Formatea Datos de DSPJRN.
+    Ejemplo:
+	Formatea Datos de DSPJRN (FMTDSPJRN1)    
+                                                               
+	 Archivo  . . . . . . . . . . . . > FSD603        Nombre       
+	   Biblioteca . . . . . . . . . .     *LIBL       Nombre, *LIBL
+	 Diario . . . . . . . . . . . . .   QSQJRN        Nombre       
+	   Biblioteca . . . . . . . . . . >   @JRNLIB     Nombre, *LIBL
+	 Archivo Destino  . . . . . . . . > JRD603        Nombre       
+	   Biblioteca . . . . . . . . . .     *LIBL       Nombre, *LIBL
+
+60. STRCMTCTL: Arranca Control de Compromiso
+    Ejemplo:
+    STRCMTCTL *CHG
+
+61. CHGJOB: Cambia la Prioridad de una sesion.
+    Ejemplo:
+    CHGJOB RUNPTY(5)
+
+62. STRDBG: Arrancar el Debug.
+    Ejemplo:
+    Inicia: STRDBG PGM(*LIBL/PPP88999) MAXTRC(20000) UPDPROD(*YES)
+    Puntos de Control: ADDBKP STMT(146600) PGMVAR(RV41 ()))
+    Finaliza: ENDDBG
+
+63. CRTRPGPGM: Opciones del Compilador Rpg.
+    Ejemplo:
+    F4+F10 ignorar error de datos decimales *yes
+
+64. CHGCMDDFT: Cambiar definicion de mandatos.
+
+65. WRKDSTQ: Trabajar con colas de Distribucion.
+
+66. DLTSPLF: Elimina Listados de un Archivo de Impresion
+    Ejemplo:
+    DLTSPLF FILE(*SELECT) SELECT(LEONLC *ALL *ALL PBS031B)
+
+67. CPYF: Copiar datos de un fisico a otro fisico
+    Ejemplo:
+    CPYF FROMFILE(BANTOT_DB/BSH400) TOFILE(BANTOT_TR/BSH400) MBROPT(*REPLACE)
+	CRTFILE(*NO) FMTOPT(*MAP *DROP)
+
+68. CHGPF: Cambia definiciones operativas de un archivo fisico
+    Ejemplo:
+    CHGPF FILE(BANTOT_DB/BSH400) SIZE(*NOMAX)
+
+69. STRDFU: Arranca DFU.
+
+70. GO LICPGM Trabajar con Programas bajo Licencia.
+
+71. STRHOSTSSRV: Arranca servidor sistema principal.
+    STRHOSTSSRV SERVER(*ALL)
+
+72. WRKWTR: Trabajar con todas las Impresoras.
+
+73. RGZPFM: Reorganiza Miembros Archivos Fisicos.
+
+74. CHGDDMF: Cambiar Archivo DDM.
+
+75. CRTDDMF: Crear Archivo DDM.
+
+76. STRISDB: Debug de programas (cl/rpg)
+    STRISDB PGM(V2/CLRECHAOD) UPDPROD(*YES) INVPGM(*NO)
+
+77. WRKCFGSTS: Trabaja con estado configuracion.
+    WRKCFGSTS CFGTYPE(*DEV) CFGD(TINKE*)
+
+78. DSPOBJD: Visualizar descripci¢n objeto
+    DSPOBJD OBJ(BCGEN_DB/*ALL) OBJTYPE(*ALL) OUTPUT(*OUTFILE) OUTFILE(TNKDB/BCGEN_DB)
+
+79. DSPFD: Visualizar descripci¢n archivo (DSPFD)
+    DSPFD FILE(BTINS_DB/FHD02101) TYPE(*ALL) OUTPUT(*)
+
+80. Trabajar con Programas bajo Licencia (version sistema operativo)
+    GO MENU(LICPGM)
+
+GO MENU(LICPGM)
+81. WRKSPLF: Vizualisar la Bandeja del spool, comando para vizualisar en el spool del as
+
+Vaciar spool , limpiar spool 
+DLTSPLF FILE(*SELECT) SELECT(wacostaca)
+
+
+Historia de proyecto Journal Remoto
+Primero que nada identificaremos los equipos de la siguiente manera:
+Origen : Equipo donde se originan los datos
+Destino: Donde serán replicados los datos.
+Nota : para todo esto debes utilizar clave de Oficial de Seguridad o similar y este documento asume que la conexión se hará en TCP/IP
+
+En equipo Origen conecta base de datos de este con el equipo destino
+
+ADDRDBDIRE RDB(S + (el No de serie de la máquina) RMTLOCNAME('La dirección IP de la máquina Destino' *IP) TEXT('RDB) Dir entry a (Equipo destino) Sistema via TCP/IP')
+
+Nota: por lo general la base de Datos de la máquina tiene como nombre Una “S” más el número de serie de la máquina pero puede ser cualquier nombre que te sea fácil de reconocer, también puede ser el SYSNAME
+Por defecto se utiliza el puerto de comunicaciones 466
+
+En Equipo Origen
+
+Es agregada a la lista la base de datos local (solo si no existe) verifícalo con el comando WRKRDBDIRE sin hay nada debes hacer lo que sigue:
+
+ADDRDBDIRE RDB(Nombre acordado en nota anterior) RMTLOCNAME(*local) TEXT('''Entry added by system')
+
+En equipo destino conecta base de datos del destino con el equipo origen
+
+ADDRDBDIRE RDB(nombre) RMTLOCNAME('(dirección IP)' *IP) TEXT('RDB
+Dir entry a (Equipo origen) Sistema via TCP/IP')
+
+En AMBOS EQUIPOS
+
+Cambio en sysval
+System value QRETSVRSEC changed from '0' to '1'.
+
+ADDSVRAUTE USRPRF(*CURRENT) SERVER(QDDMSERVER)
+Se agregó el servicio con clave QSECOFR o similar
+
+CHGDDMTCPA AUTOSTART(*YES) PWDRQD(*NO)
+
+Creación de bibliotecas para el Journal y además otra para el receptor asociado.
+Nota : intenta usar nombres mnemotécnicos que te ayuden a identificar fácilmente el Journal el Receptor, etc.
+
+CRTLIB LIB(nombre) TEXT('Biblioteca receptora de Journals')
+CRTLIB LIB(nombre) (TEXT('Librería de Journals')
+
+En equipo Origen creación de Receptor de journal.
+
+CRTJRNRCV JRNRCV(nombre lib/nombre receptor) TEXT('Receptora de Journal para librería XXXXX')
+
+Creación de Journal
+CRTJRN JRN(librería de Journal/Nombre de Journal ) JRNRCV(Librería de Receptor/Nombre de Receptor) RCVSIZOPT(*MINFIXLEN) TEXT('Journal de de archivo XXXXX')
+
+En equipo Origen se le da partida al Journal
+STRJRNPF FILE(librería de base de datos/archivo) JRN(librería de journal/Nombre de Journal)
+
+ADDRMTJRN RDB(Nombre) SRCJRN(librería de Journal/nombre de Journal) TGTJRN(*SRCJRN)
+
+En ambos equipos se asocia el Journal Remoto a receptor de diario
+
+Con WRKJRN opc 9 Asociar receptores con diario
+
+En Equipo Origen
+Se cambia el Journal remoto de tal manera de hacerlo más eficiente.
+Se asocia receptor de diario.
+
+CHGRMTJRN RDB(nombre) SRCJRN(librería Journal /Nombre de Journal) TGTJRN(*SRCJRN) JRNSTATE(*ACTIVE) DELIVERY(*SYNC) STRJRNRCV(Librería Receptor/nombre de receptor)
+
+En Equipo Origen.
+
+Se procede a salvar archivo registrado por journal para que el sistema actualice la historia de este (el objeto ) y se hereden los cambios
+Para hacer esto se puede crear un archivo *SAVF temporal de tal manera de que se actualice solo la historia para posteriormente eliminarlo (el *SAVF).
+
+Nota : Este manual es sumamente básico pero si se siguen al pie de la letra los pasos tendrás éxito y ten en cuenta que considera solo archivos físicos, por otro lado en un solo Journal puedes agregar varios archivos de una sola vez en mi caso tengo variadas bibliotecas para diferentes aplicaciones, ten en cuenta cuales son los maestros y solo agrega estos y no todos puesto que te puede traer problemas de PERFORMANCE o rendimiento.
+Yo hice esto entre un 730 y un 50s siendo el 730 el origen y el 50s el destino. Como sugerencia has la prueba con un solo archivo primero.
+Cualquier duda sobre comandos de Journal ejecuta GO CMDJRN te aparecen todos los comando relacionados.
+Este manual solo pretende ayudarte a hacer la conexión pero hay mucho que aprender todavía.
+
+Documento elaborado por Marcello Romo Corsi
+13-10-2002
+
+
+
+Desplegar Diarios(Journal) en ISERIES
+Tomado de:
+
+http://www.help400.es/asp/scripts/nwart.asp?Num=87&Pag=54&Tip=U
+
+Un visualizador de diarios fácil de leer  
+Ultimamente, las mejoras introducidas en la base de datos DB2/400, junto con la necesidad de maximizar su integridad y consolidar el cumplimiento de normas de auditoría, han convertido al registro por diario de los datos corporativos (el journal) en un requisito casi imprescindible para la mayoría de instalaciones AS/400. El registro por diario de los archivos de base de datos proporciona unas posibilidades de recuperación excelentes y, además, también supone un factor adicional a la hora de implementar técnicas de control de compromiso y/o integridad referencial para los archivos de base de datos.
+A menudo utilizamos las entradas de diario como una herramienta de depuración para hacer un seguimiento de los cambios en los datos de un archivo. Lamentablemente, por lo general los datos de una entrada de diario son difíciles de interpretar. Si alguna vez ha utilizado entradas de diario para realizar una depuración, sabrá de lo que estamos hablando. Incluso comprendiendo las pantallas del mandato DSPJRN (Visualizar Diario), es difícil trabajar con ese mandato porque sus resultados muestran la porción de datos de usuario de las entradas de diario como una serie de datos sin ningún tipo de formato. Si le parece interesante un método mejor para ver la actividad (adiciones, cambios y supresiones) en sus archivos, el programa de utilidad FMTJRNE que hoy presentamos, puede ser lo que andaba buscando.
+FMTJRNE le permite ver una selección de entradas de diario pasando archivo por archivo y utilizando un formato de presentación fácil de comprender. FMTJRNE utiliza el diseño original de los archivos de base de datos para visualizar las columnas de cada entrada (por ejemplo, fecha/hora de actualización, programa que ha actualizado el registro, usuario que ha modificado el registro, etc.).
+Cómo se utiliza FMTJRNE Para ejecutar el mandato, sólo hay que especificar FMTJRNE en una línea de entrada de mandatos seguido por el único parámetro obligatorio, el nombre del archivo cuyas entradas de diario queremos visualizar. Por omisión, la pantalla resultante muestra todas las entradas de diario actuales correspondientes al archivo seleccionado. También dispone de varios parámetros opcionales que permiten seleccionar las entradas y especificar opciones de salida. Puede restringir el número de entradas especificando:
+Un rango de receptor de diario
+Los números inicial y final de las entradas de diario
+La fecha y hora inicial y final
+El número de entradas
+El trabajo que ha efectuado los cambios en los registros
+El programa que ha efectuado los cambios en los registros
+El perfil de usuario que ha efectuado los cambios en los registros
+El ID de ciclo de control de compromiso
+Las opciones de salida le permiten visualizar las entradas de diario formateadas en la pantalla de la estación de trabajo, enviar las entradas a un informe o enviarlas a un archivo de salida. Si selecciona la opción de archivo de salida, el nombre del archivo de salida debe empezar por los caracteres FMTJ. Esto evita que el programa de utilidad sobreescriba los archivos del sistema que no utiliza el mandato FMTJRNE. Si existen archivos de producción que empiezan por dichos caracteres, modifique el programa de comprobación de validez (VCP) del programa de manera que utilice una serie de caracteres diferente.
+Puede especificar si desea añadir las entradas a un archivo o sustituir las existentes. También puede especificar si la utilidad debe crear el archivo de salida.
+Detrás de los focos El programa de utilidad FMTJRNE consiste en la definición de mandato FMTJRNE, el programa de proceso de mandato (CPP) FMTJRNEC, el VCP FMTJRNEV y el grupo de paneles de ayuda FMTJRNE, que proporciona texto de ayuda sensible al contexto cuando se solicita el mandato. Además, la Utilidad RUNSQL (publicada en el número 50) debe estar instalada en el sistema. (Para obtener más información acerca de cómo obtener e instalar este mandato, vea el recuadro "Guía rápida del mandato RUNSQL" en este mismo artículo.)
+El VCP FMTJRNEV valida los parámetros del mandato, como por ejemplo el nombre del archivo, el nombre del archivo de salida y el nombre del diario. También comprueba dos pares de parámetros - número de entrada y fecha/hora inicial, y número de entrada y fecha/hora final - para cerciorarse de que sólo se especifica un valor de cada par. Si la comprobación de validez no tiene éxito, la pantalla visualiza un mensaje de error en la parte inferior de la pantalla de entrada de mandatos. A continuación puede corregir los parámetros erróneos y volver a ejecutar el mandato. Si la comprobación de validez es satisfactoria, el CPP da formato a las entradas de diario y crea la salida.
+Como puede ver en los ejemplos de salida del mandato FMTJRNE, la información de las entradas de diario es fácil de leer. Ahora, cuando tenga que averiguar qué está sucediendo con los datos de sus archivos, el mandato FMTJRNE le hará vida un poco más fácil. 
+Cómo instalar FMTJRNE Para instalar el programa de utilidad FMTJRNE:
+1. Asegúrese de que el mandato RUNSQL está instalado en el sistema y en la lista de bibliotecas que utilizará cuando compile estos programas y utilice el mandato FMTJRNE.
+2. Cree el mandato FMTJRNE como sigue:
+CRTCMD CMD(FMTJRNE) PGM(FMTJRNEC) VLDCHR(FMTJRNEV) +
+HLPPNLGRP(FMTJRNE) HELPID(*CMD)
+3. Cree el programa de proceso de mandatos CL FMTJRNEC y el programa de comprobación de validez CL FMTJRNEV:
+CRTCLPGM PGM(FMTJRNEC)
+CRTCLPGM PGM(FMTJRNEV)
+4. Cree el grupo de paneles de ayuda FMTJRNE:
+CRTPNLGRP PNLGRP(FMTJRNE)
+Sobre el mandato RUNSQL
+Para poder utilizar el mandato FMTJRNE es indispensable disponer del mandato RUNSQL, una Utilidad que se publicó en el número 50 de la revista (correspondiente a Enero de 1995) y que permite ejecutar mandatos SQL en el AS/400 aunque no se disponga del software de desarrollo SQL del programa bajo licencia IBM DB2/400 Gestor de Consultas y Kit de Desarrollo SQL (57xx-STI) en el sistema.
+El mandato RUNSQL también proporciona una cómoda interfaz al soporte incorporado del AS/400 para las consultas SQL del Gestor de Consultas. Puede obtener el código fuente del RUNSQL a partir de Internet, en la dirección www.help400.es buscando el link correspondiente en la página web dedicada a la Utilidad del mes.
+La utilidad RUNSQL utiliza los siguientes miembros fuente:
+• La definición de consulta ZUQXSQL del Gestor de Consultas
+• Crear el programa CL ZUCXSQL                   
+• CRTQMQRY QMQRY(QGPL/ZUQXSQL) SRCFILE(COMANDOS)  
+• Crear el comando RUNSQL, hacer referencia al programa ZUCXSQL
+Y, para su instalación, siga los pasos descritos en la Guía de Intalación.
+Peter Martin es consultor AS/400 de la empresa C3 Consulting, en Narellan (Australia)
+
+Create your own RUNSQL cmd for use in CLP.
+1. Create a new RUNSQL mbr in srcfile QQMQRYSRC, enter a single line as
+follows and save it.
+&V1&V2&V3&V4&V5&V6&V7&V8&V9&V10
+
+2. Create a *QMQRY object named RUNSQL from this source - CRTQMQRY
+QMQRY(QGPL/RUNSQL)
+
+3. Create a CLP pgm named RUNSQL as follws.
+             PGM        PARM(&STMT)
+             DCL        VAR(&STMT) TYPE(*CHAR) LEN(550)
+             DCL        VAR(&V1) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V2) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V3) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V4) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V5) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V6) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V7) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V8) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V9) TYPE(*CHAR) LEN(55)
+             DCL        VAR(&V10) TYPE(*CHAR) LEN(55)
+
+             CHGVAR &V1 %SST(&STMT 001 55)
+             CHGVAR &V2 %SST(&STMT 056 55)
+             CHGVAR &V3 %SST(&STMT 111 55)
+             CHGVAR &V4 %SST(&STMT 166 55)
+             CHGVAR &V5 %SST(&STMT 221 55)
+             CHGVAR &V6 %SST(&STMT 276 55)
+             CHGVAR &V7 %SST(&STMT 331 55)
+             CHGVAR &V8 %SST(&STMT 386 55)
+             CHGVAR &V9 %SST(&STMT 441 55)
+             CHGVAR &V10 %SST(&STMT 496 55)
+
+
+             STRQMQRY   QMQRY(RUNSQL) SETVAR((V1 &V1) (V2 &V2) (V3 +
+                          &V3) (V4 &V4) (V5 &V5) (V6 &V6) (V7 &V7) +
+                          (V8 &V8) (V9 &V9) (V10 &V10))
+
+ENDPGM
+
+4. Create a command named RUNSQL as follows
+             CMD        PROMPT('Run SQL Statement')       
+             PARM       KWD(STMT) TYPE(*CHAR) LEN(550)
+
+			 
+IGUALDAD EN CQUERY
+EQ	Igual a. Contenido de campos iguales
+NE	No igual. Contenido de campos diferentes
+GT	Mayor que. Contenido de un campo mayor que otro
+LT	Menor que. Contenido de un campo menor que otro
+GE	Mayor ó Igual que. Contenido de un campo mayor ó igual que otro
+LE	Menor ó igual que. Contenido de un campo menor ó igual que otro.
+RANGE	Rango. Contenido de un campo esta dentro de un rango establecido.
+LIST	Lista. Contenido del campo es igual que uno de los valores de la lista
+NLIST	No lista. Contenido del campo no es igual a los valores de la lista
+LIKE	Similar. Contenido del campo incluye valor similar a otro
+NLIKE	No Similar. Contenido del campo tiene un patrón que no es similar al valor
+IS	Es. Campo Nulo, Valor válido NULL
+ISNOT	No es. Valor del campo no es nulo
+
+
+
+
+/****************************/
+Enoc Gaona
+09:02 a.m.
+crtjdbccalls
+SYSPROCS/QSYS2 
+CREATE PROCEDURE BTWSBKPGM/PSBK028B (INOUT NUMERIC(3, 0), INOUT NUMERIC(3, 0), INOUT CHAR(8), 
+INOUT NUMERIC(4, 0), INOUT CHAR(1), INOUT NUMERIC(3, 0), INOUT NUMERIC(9, 0), INOUT CHAR(1), 
+INOUT NUMERIC(12, 0), INOUT CHAR(10), INOUT CHAR(10), INOUT CHAR(60)) EXTERNAL NAME BTWSBKPGM/PSBK028B LANGUAGE RPG GENERAL
+
+Verificar los campos que tiene un Indice 
+1) WRKOBJPDM / BIBLIOTECA/TABLA
+2) Opción 5 sobre el campo del Indice que se desea Vizualisar 
+3) Vizualisar desde la descripción de 'Numero de campos Clave'
