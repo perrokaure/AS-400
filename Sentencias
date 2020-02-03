@@ -129,11 +129,11 @@ PERMITE CONTINUAR TRABAJANDO POR ARRIBA, MIENTRAS POR DEBAJO CONTINUA TRABAJANDO
 15. DSPOBJD: Visualizar Descripcion de Objeto.
 
 16. DSPDBR: Despliega la relacion de un fisico con sus logicos
-Relacion entre los Indices VERIFICAR INDICES DE ORIGEN
+Relacion entre los Indices VERIFICAR INDICES DE ORIGEN(Para validar los Indices que tiene)
 
 17. UPDDTA: Modificar datos de archivos.
 
-18. DSPFD: Visualizar informacion de un archivo
+18. DSPFD: Visualizar informacion de un archivo (Ejemplo ver los campos de los Indices)
 
 19. DSPFFD: Visualizar informacion y estructura de campos de un archivo fisico.
 
