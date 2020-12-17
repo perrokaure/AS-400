@@ -1,0 +1,23 @@
+/*primer Paso */
+Ejecutar la Funcion STRPDM
+
+/*Segundo Paso*/
+Seleccionar la opcion Trabajar con Miembros
+
+/*Tercer Paso*/
+Elegir el Archivo QCLSRC de la Bilioteca donde se encuentre Ubicado el Programa Relacionado
+Esta Opcion es para dirigirnos al Código Fuente del archivo RPG en cuestion
+
+/*Cuarto Paso*/
+Buscamos el Codigo Fuente del Programa, en el Filtro Situar en (Para saber el Código Fuente de nuestro Programa genexus, Debemos ir el Output a la Hora de Compilar nuestro Objeto, Al finalizar Ubicara el Codigo
+Se anexa un Ejemplo '
+TFR/TCP: Transfering C:\Models\Balance\RPG_40~1\GXAPPPGM.LST to PROTPGM/GXAPPPGM(GXAPPPGM)
+TFR/TCP: Transfering C:\Models\Balance\RPG_40~1\APRCOM080.rpg to PROTPGM/QRPGSRC(APRCOM080)
+TFR/TCP: Transfering C:\Models\Balance\RPG_40~1\CP000148.clp to PROTPGM/QCLSRC(CP000148)
+'
+En esta caso el Archivo Fuente .CLP es el CP000148
+) Una ves Filtrado el Archivo Elegimos la Opcion 2 De editar el Archivo 
+
+/*Quinto Paso */
+
+Recordar el tipo Debe de ser CLP, 
