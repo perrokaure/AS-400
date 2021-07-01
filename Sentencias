@@ -574,3 +574,17 @@ Verificar los campos que tiene un Indice
 1) WRKOBJPDM / BIBLIOTECA/TABLA
 2) Opción 5 sobre el campo del Indice que se desea Vizualisar 
 3) Vizualisar desde la descripción de 'Numero de campos Clave'
+
+
+/*ALGUNOS LINK DE AYUDA PARA LOS HERMANOS*/
+http://publib.boulder.ibm.com/tividd/td/as400/as4ug36/es_ES/PDF/index.pdf
+http://as400howto.blogspot.com/2013/04/historico-de-trabajos-del-sistema.html
+http://www.motxilla.net/AS400/AS400.htm
+https://www.ibm.com/docs/en/i/7.4?topic=ssw_ibm_i_74/cl/cpyf.htm
+
+
+/*UNA PARTE DE LO APRENDIDO EN VISIÖN*/
+DSPFFD-INDICE
+DSPDBR FILE(PROTDB/CONCG)
+DSPFD- Ver los campos que Componen el Indice 
+/**/
