@@ -588,3 +588,341 @@ DSPFFD-INDICE
 DSPDBR FILE(PROTDB/CONCG)
 DSPFD- Ver los campos que Componen el Indice 
 /**/
+
+
+
+
+/*APORTESSS DEL MAGOOOOOOOOOOO*/
+//-------------------------------------SQL AS/-400-------------------------------------------------------
+CREATE SEQUENCE dcoredbdb2/eCHCIdsq START with 1 					//insertar identificador a la tabla de Autonumber
+ALTER SEQUENCE tconidsq  RESTART WITH XXX 	 					//dejar el secuence, en el último nro.
+SELECT NEXTVAL FOR   ECOLIDSQ   FROM SYSIBM/SYSDUMMY1 					//para saber siguiente numero
+SELECT NEXTVAL FOR   ECOLIDSQ/dcoredbdb2  FROM SYSIBM/SYSDUMMY1 			//para saber siguiente numero
+
+ALTER TABLE CCMCHD ALTER COLUMN ECHDID SET GENERATED ALWAYS  				//para autonumerar 
+ALTER TABLE CCMCHD ALTER COLUMN ECHDID SET GENERATED ALWAYS  RESTART WITH 10000		//para establecer autonumerar desde una posición
+
+*****************************************
+wrkobj LIBRERIA/TABLA * 			 					//consultar código numerador 
+WRKF *ALL/EECATCLI 
+WRKF FILE(*ALL/TABLA) 
+WRKOBJPDM
+WRKLIB //Para buscar librería
+STRPDM
+upddta LIBRERIA/INDICE								//Ver-actualizar registro del indice
+WRKOBJLCK OBJ(FREDIP) OBJTYPE(*USRPRF)  						//PARA CONSULTAR TRABAJOS DEL USUARIO
+CALL PGM(BIBLIOTECA/PROGRA) PARM(PARM1, PARM2)  					//PARA LLAMAR A UN PROGRAMA
+EDTLIBL										//Editar - agregar librerias para trabajar
+addlible (LIBRERIA) 									//agregar de a uno las librerias para trabajar
+WRKSPLF 										//Ver archivo que está en el spool 
+GO CMD...										//PARA BUSCAR COMANDO 
+DSPPGMREF 									//Referencia a programas que lo utiliza
+SELECT * FROM QS36F001/QRELAC 					//Para buscar programas que utiliza un programa determinado
+
+//............................................. TRABAJAR CON TABLAS E INDICES .............................................                   
+DSPDBR LIBRERIA/TABLA 								//ver componentes - indices de la tabla
+DSPFD LIBRERIA/TABLA  TYPE(*ACCPTH) 							//ver los campos indices de la tabla   
+DSPFD FILE(LIBRERIA/INDICE) 								//ver campos de índices 
+DSPFFD FILE(LIBRERIA/INDICE)								//ver campos de índices 
+DSPFFD LIBRERIA/TABLA 								//para ver detalle de una tabla
+DSPFFD BIBLIOTECA/TABLA *PRINT 							//Para llevar la consulta a al spool
+DSPPFM FILE(ITBDBLIB/CLMCLB)                                    
+DSPPFM MCLB 
+CALL UTILIDX ('TABLA/ARCHIVO' 'LIBRERIA')							//Para ver indices de una tabla
+
+
+STRJRNPF FILE(QS36F001/EECATCLI) JRN(QS36F001/QSQJRN)   					//Jornalizar
+DSPFD dcoredbdb2/ccmaud   --> buscar --> diario --> shift + F4 --> "Archivo actualmente registrándose por diario: Sí; Diario actual o último. . .: QSQJRN " //para verificar jornal
+
+RCLRSC + Enter 									//Para liberar programa que se ha ejecutado
+RCLRSC + F4   *CALLER 								//para liberar todos los llamados
+
+SBMJOB CMD(CALL PGM(CSPRESTA01/PPRP1071) PARM('20111229'))  				//submitir un programa para realizar pruebas
+
+CPYF FROMFILE(COREDBDB2/SCCUSR) TOFILE(YAPI/SCCUSRCC) FROMMBR(*FIRST) MBROPT(*REPLACE) CRTFILE(*YES)			//Copiar archivo
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/CLMCLI) TOFILE(DCOREDBDB2/CLMCLI) FROMMBR(*FIRST) MBROPT(*REPLACE) CRTFILE(*YES))  	//Copiar archivo
+
+//----------Transferencia de archivo 
+ 1 - CPYF FROMFILE(CLIBL/CCMPCH)
+ 2 - addlible uti.libr 
+ 3 - go insmnu 
+//-------------------------
+
+RUNQRY *N EETABCRI 						//Ejecutar query
+RUNQRY *N QS36F001/FIRMAN1					//Ejecutar query
+
+WRKJOB 								//Trabajar con
+
+
+
+SQL (AS/400) LABEL ON CCMCDC (eCDCAlf text is 'Alta fecha', eCDCAlh text is 'Alta hora',eCDCAlu text is 'User hora', eCDCCFc text is 'Fecha de constitución',  
+eCDCCliNo text is 'Nro. Cliente', eCDCCta text is 'Nro. Cuenta', eCDCDen text is 'Denominación Negocio', eCDCEd text is 'Estado Info',             
+eCDCId text is 'Id cheque diferido', eCDCliId text is 'Nro. Persona', eCDCMdf text is 'Modificación fecha', eCDCMdh text is 'Modificación hora',      
+eCDCMdu text is 'Modificación user', eCDCObs text is 'Motivo Cheque Diferido', eCDCTScId text is 'Tipo de sociedad', eCDCVCsId text is 'Clasificacion')  //Etiquetar campos de una tabla       
+//Obs:ESCRIBIR EN MAYUSCULA EL NOMBRE DE LA TABLA Y DE LA LIBRERÍA
+
+SELECT SUBSTR(COLUMN_NAME, 1, 10) COLUMN_NAME, DATA_TYPE, LENGTH, 
+NUMERIC_SCALE, COLUMN_TEXT, IS_NULLABLE  FROM qsys2/syscolumns WHERE 
+TABLE_NAME='NOMBRE_TABLA' and table_schema='ESCRIBIR_NOMBRE_LIBRERIA' 
+ORDER BY ORDINAL_POSITION 	//Ver estructura de una tabla
+
+CREATE INDEX biblioteca/indice ON biblioteca/tabla(campo)   //Crea indices
+
+//............................................. EJECUTAR PROGRAMA JAVA EXTERNO DESDE AS400.............................................   
+PGM
+    RUNJVA CLASS(aenvioalta) CLASSPATH('/intb/apps/infonet/jt400.jar:/intb/apps/infonet/gxclassr.zip:/intb/apps/infonet/servlet.jar:/intb/apps/infonet/envio_GXWS.jar')
+ENDPGM
+
+//.............................................CONCATENAR EN PLANILLA ELECTÓNICA.............................................
+(Dejar solo las columnas A=Capmo, B=Descripción) 
+=CONCATENAR(A1;" text is '";IZQUIERDA(B1;40);"',")
+
+//.............................................TRABAJAR CON STORE PROCEDURE.............................................
+//Ver-Consultar, obs: el "%" es opcional para busqueda en cualquier posición dentro del campo
+SELECT * FROM qsys2/sysprocs WHERE SPECIFIC_NAME = '%NFNPR006%'		
+SELECT * FROM qsys2/parameters WHERE SPECIFIC_NAME like '%NFNPR006%'	
+
+//Borrado
+DROP PROCEDURE BIBLIOTECA/NOMBRE DEL PROGRAMA
+
+//Crear
+CREATE PROCEDURE NOMBRE_LIBRERIA/NOMBRE_STORE_PRECEDURE (INOUT CHAR(256), INOUT NUMERIC(2), NUMERIC(18, 2), INOUT VARCHAR(9000)) EXTERNAL NAME NOMBRE_LIBRERIA/NOMBRE_PROGRAMA LANGUAGE RPG GENERAL
+o bien,
+CREATE PROCEDURE NOMBRE_LIBRERIA/NOMBRE_STORE_PRECEDURE (INOUT CHAR(256), INOUT NUMERIC(2), NUMERIC(18, 2), INOUT VARCHAR(9000)) EXTERNAL NAME NOMBRE_LIBRERIA/NOMBRE_PROGRAMA LANGUAGE RPGLE GENERAL
+
+//.............................................VISTA.............................................
+create view yapi.bca0106 as SELECT distinct C.NUCL FROM BALIB.BALOGTRA A, BALIB.BADESTRA B, QS36F.PRCATAST C         
+WHERE A.LIDTRA= B.DSTRAN  AND B.DSDESP = 'S' AND A.LINOUT = 'I' AND SUBSTR(A.LDATOS, 8, 7) = DIGITS(C.NUCL) AND                       
+(substr(DIGITS(LFECHA), 3, 6) in ('012008', '022008', '032008', '042008', '052008', '062008'))  
+
+//------------------------------------------------INSERT INTO
+INSERT INTO NOMBRE_BIBLIOTECA_DESTINO.NOMRE_TABLA(CAMPO1,CAMPO2)
+SELECT CAMPO1,CAMPO2 FROM NOMBRE_BIBLIOTECA_DESTINO.NOMRE_TABLA
+
+//DEBUG RPG
+STRPDM
+OPCION:3
+Archivo:QRPG, Biblioteca:RUBENGLIB, Miembro:NFNPR235 
+
+OPC 	MIEMBRO
+CC	NFNPR235         	//Para que asuma la biblioteca actual, en este caso rubénglib
+DB	NFNPR235 	//DEBUG
+F6 			//En línea dnd se quiere que pare
+F11			//Visualizar punto valor de la variable		
+
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/NUTGTE) TOFILE(YAPI/NUTGTE) MBROPT(*REPLACE) CRTFILE(*YES)) 
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/CLCVCS) TOFILE(YAPI/CLCVCS) MBROPT(*REPLACE) CRTFILE(*YES)) 
+
+Select * FROM PPLIB003/PPMVPD WHERE PDUSU = 'FREDIP'//Desbloqueo Objeto/Miembro
+Select * FROM PPLIB001/PPMVPD WHERE PDUSU = 'FREDIP '//Desbloqueo Objeto/Miembro
+Select * FROM PPLIB003/PPMVPD WHERE PDUSU = 'FREDIP'//Desbloqueo Objeto/Miembro
+
+imn //Consulta a GescamII
+
+DSPOBJD GX/GXFJD *ALL 
+
+noelia -->
+	SELECT * FROM itbdblib/acmkit WHERE GKITFECALT = '20131230' and
+	GKITHORALT >= '10:30:00'
+
+	SELECT * FROM qs36f/genprosl WHERE FCHSOL = 20140102
+
+	SELECT A.ACLINO, A.ACLIGTEID FROM COREDBDB2/CLMCLI AS A INNER JOIN 
+COREDBDB2/NUTGTE AS B ON A.ACLIGTEID = B.BGTEID WHERE A.ACLINO IN  
+(30643, 2686428, 4031910, 920264, 1124049, 3006498, 2420206,       
+333914, 2869738, 287391, 1310564, 3053747, 3053932, 3003136,       
+3005847, 3005894, 3022867, 3053932, 955567, 2876838, 3023197,      
+3053946, 3023223) AND B.BGTEAREID = 23
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (10,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (11,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (12,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (13,0)
+                            
+
+
+
+
+//-------------------------------------SQL
+
+AS/-400-------------------------------------------------------
+CREATE SEQUENCE dcoredbdb2/eCHCIdsq START with 1                     //insertar identificador a la tabla de Autonumber
+ALTER SEQUENCE tconidsq  RESTART WITH XXX                         //dejar el secuence, en el último nro.
+SELECT NEXTVAL FOR   ECOLIDSQ   FROM SYSIBM/SYSDUMMY1           //para saber siguiente numero
+SELECT NEXTVAL FOR   ECOLIDSQ/dcoredbdb2  FROM SYSIBM/SYSDUMMY1 //para saber siguiente numero
+
+ALTER TABLE CCMCHD ALTER COLUMN ECHDID SET GENERATED ALWAYS         //para autonumerar
+ALTER TABLE CCMCHD ALTER COLUMN ECHDID SET GENERATED ALWAYS RESTART WITH 10000        //para establecer autonumerar desde una posición
+
+*****************************************
+....................COPIAR TABLAS DESDE PRODUCCIÓN A DESARROLLO.......................
+DROP TABLE CMMPRD/PDMTRN  //Borrar la tabla destino
+
+CRTDUPOBJ OBJ(PDMTRN) FROMLIB(SNGPRD) OBJTYPE(*ALL) TOLIB(CMMPRD) NEWOBJ(*SAME) DATA(*YES) FILEID(*YES) //De producción a desarrollo
+
+*****************************************
+
+wrkobj LIBRERIA/TABLA * //consultar código numerador
+WRKF * ALL/EECATCLI
+WRKF FILE(*ALL/TABLA)
+WRKOBJPDM
+WRKLIB //Para buscar librería
+STRPDM
+upddta LIBRERIA/INDICE                                 //Ver-actualizar registro del indice
+WRKOBJLCK OBJ(JEMINO) OBJTYPE(*USRPRF)                 //PARA CONSULTAR TRABAJOS DEL USUARIO
+CALL PGM(BIBLIOTECA/PROGRA) PARM(PARM1, PARM2)  //PARA LLAMAR A UN
+PROGRAMA
+EDTLIBL                                         //Editar - agregar
+librerias para trabajar
+addlible (LIBRERIA)                             //agregar de a
+uno las librerias para trabajar
+WRKSPLF                                         //Ver archivo que está
+en el spool
+GO CMD...                                       //PARA BUSCAR COMANDO
+DSPPGMREF                                       //Referencia a programas
+que lo utiliza
+SELECT * FROM QS36F001/QRELAC                   //Para buscar programas que utiliza un programa determinado
+
+//............................................. TRABAJAR CON TABLAS E
+INDICES .............................................
+DSPDBR LIBRERIA/TABLA                                             //ver componentes indices de la tabla
+DSPFD LIBRERIA/TABLA  TYPE(*ACCPTH)                         //ver los campos indices de la tabla
+DSPFD FILE(LIBRERIA/INDICE)                                 //ver campos de índices
+DSPFFD FILE(LIBRERIA/INDICE)                                //ver campos de índices
+DSPFFD LIBRERIA/TABLA                                             //para ver detalle de una tabla
+DSPFFD BIBLIOTECA/TABLA *PRINT                                     //Para llevar la consulta a al spool
+DSPPFM FILE(ITBDBLIB/CLMCLB)
+DSPPFM MCLB
+CALL UTILIDX ('TABLA/ARCHIVO' 'LIBRERIA')                         //Para ver indices de una
+tabla
+
+
+STRJRNPF FILE(QS36F001/EECATCLI) JRN(QS36F001/QSQJRN)
+//
+nalizar
+DSPFD dcoredbdb2/ccmaud   --> buscar --> diario --> shift + F4 --> "Archivo actualmente registrándose por diario: Sí; Diario actual o
+último. . .: QSQJRN " //para verificar jornal
+
+RCLRSC + Enter                                             //Para liberar
+programa que se ha ejecutado
+RCLRSC + F4   *CALLER                                   //para liberar
+todos los llamados
+
+SBMJOB CMD(CALL PGM(CSPRESTA01/PPRP1071) PARM('20111229'))   //submitir un programa para realizar pruebas
+
+CPYF FROMFILE(COREDBDB2/SCCUSR) TOFILE(YAPI/SCCUSRCC) FROMMBR(*FIRST)
+MBROPT(*REPLACE) CRTFILE(*YES)            //Copiar archivo
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/CLMCLI) TOFILE(DCOREDBDB2/CLMCLI)
+FROMMBR(*FIRST) MBROPT(*REPLACE) CRTFILE(*YES))      //Copiar archivo
+
+//----------Transferencia de archivo
+  1 - CPYF FROMFILE(CLIBL/CCMPCH)
+  2 - addlible uti.libr
+  3 - go insmnu
+//-------------------------
+
+RUNQRY *N EETABCRI                         //Ejecutar query
+RUNQRY *N QS36F001/FIRMAN1                 //Ejecutar query
+
+WRKJOB                                    //Trabajar con
+
+
+
+SQL (AS/400) LABEL ON CCMCDC (eCDCAlf text is 'Alta fecha', eCDCAlh text is 'Alta hora',eCDCAlu text is 'User hora', eCDCCFc text is 'Fecha de
+constitución',eCDCCliNo text is 'Nro. Cliente', eCDCCta text is 'Nro. Cuenta', eCDCDen text is 'Denominación Negocio', eCDCEd text is 'Estado Info',
+eCDCId text is 'Id cheque diferido', eCDCliId text is 'Nro. Persona', eCDCMdf text is 'Modificación fecha', eCDCMdh text is 'Modificación hora',
+eCDCMdu text is 'Modificación user', eCDCObs text is 'Motivo Cheque Diferido', eCDCTScId text is 'Tipo de sociedad', eCDCVCsId text is
+'Clasificacion')  //Etiquetar campos de una tabla //Obs:ESCRIBIR EN MAYUSCULA EL NOMBRE DE LA TABLA Y DE LA LIBRERÍA
+
+SELECT SUBSTR(COLUMN_NAME, 1, 10) COLUMN_NAME, DATA_TYPE, LENGTH, NUMERIC_SCALE, COLUMN_TEXT, IS_NULLABLE  FROM qsys2/syscolumns WHERE
+TABLE_NAME='NOMBRE_TABLA' and table_schema='ESCRIBIR_NOMBRE_LIBRERIA' ORDER BY ORDINAL_POSITION     //Ver estructura de una tabla
+
+CREATE INDEX biblioteca/indice ON biblioteca/tabla(campo)   //Crea indices
+
+//............................................. EJECUTAR PROGRAMA JAVA EXTERNO DESDE AS400.............................................
+PGM
+     RUNJVA CLASS(aenvioalta)
+CLASSPATH('/intb/apps/infonet/jt400.jar:/intb/apps/infonet/gxclassr.zip:/intb/apps/infonet/servlet.jar:/intb/apps/infonet/envio_GXWS.jar')
+ENDPGM
+
+//.............................................CONCATENAR EN PLANILLA
+ELECTÓNICA............................................. (Dejar solo las columnas A=Capmo, B=Descripción)
+=CONCATENAR(A1;" text is '";IZQUIERDA(B1;40);"',")
+
+//.............................................TRABAJAR CON STORE
+PROCEDURE.............................................//Ver-Consultar, obs: el "%" es opcional para busqueda en cualquier posición dentro del campo
+SELECT * FROM qsys2/sysprocs WHERE SPECIFIC_NAME = '%NFNPR006%'
+SELECT * FROM qsys2/parameters WHERE SPECIFIC_NAME like '%NFNPR006%'
+
+//Borrado
+DROP PROCEDURE BIBLIOTECA/NOMBRE DEL PROGRAMA
+
+//Crear
+CREATE PROCEDURE NOMBRE_LIBRERIA/NOMBRE_STORE_PRECEDURE (INOUT CHAR(256), INOUT NUMERIC(2), NUMERIC(18, 2), INOUT VARCHAR(9000))
+EXTERNAL NAME NOMBRE_LIBRERIA/NOMBRE_PROGRAMA LANGUAGE RPG GENERAL
+o bien,
+CREATE PROCEDURE NOMBRE_LIBRERIA/NOMBRE_STORE_PRECEDURE (INOUT CHAR(256), INOUT NUMERIC(2), NUMERIC(18, 2), INOUT VARCHAR(9000))
+EXTERNAL NAME NOMBRE_LIBRERIA/NOMBRE_PROGRAMA LANGUAGE RPGLE GENERAL
+
+//.............................................VISTA.............................................
+create view yapi.bca0106 as SELECT distinct C.NUCL FROM BALIB.BALOGTRA A, BALIB.BADESTRA B, QS36F.PRCATAST C
+WHERE A.LIDTRA= B.DSTRAN  AND B.DSDESP = 'S' AND A.LINOUT = 'I' AND SUBSTR(A.LDATOS, 8, 7) = DIGITS(C.NUCL) AND
+(substr(DIGITS(LFECHA), 3, 6) in ('012008', '022008', '032008', '042008', '052008', '062008'))
+
+//------------------------------------------------INSERT INTO
+INSERT INTO NOMBRE_BIBLIOTECA_DESTINO.NOMRE_TABLA(CAMPO1,CAMPO2)
+SELECT CAMPO1,CAMPO2 FROM NOMBRE_BIBLIOTECA_DESTINO.NOMRE_TABLA
+
+//DEBUG RPG
+STRPDM
+OPCION:3
+Archivo:QRPG, Biblioteca:RUBENGLIB, Miembro:NFNPR235
+
+OPC     MIEMBRO
+CC    NFNPR235          //Para que asuma la biblioteca actual, en
+este caso rubénglib
+DB    NFNPR235             //DEBUG
+F6                             //En línea dnd se quiere que pare
+F11                            //Visualizar punto valor de la variable
+
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/NUTGTE) TOFILE(YAPI/NUTGTE)
+MBROPT(*REPLACE) CRTFILE(*YES))
+SBMJOB CMD(CPYF FROMFILE(COREDBDB2/CLCVCS) TOFILE(YAPI/CLCVCS)
+MBROPT(*REPLACE) CRTFILE(*YES))
+
+Select * FROM PPLIB003/PPMVPD WHERE PDUSU = 'FREDIP'//Desbloqueo
+Objeto/Miembro
+Select * FROM PPLIB001/PPMVPD WHERE PDUSU = 'FREDIP '//Desbloqueo
+Objeto/Miembro
+Select * FROM PPLIB003/PPMVPD WHERE PDUSU = 'FREDIP'//Desbloqueo
+Objeto/Miembro
+
+imn //Consulta a GescamII
+
+DSPOBJD GX/GXFJD *ALL
+
+noelia -->
+     SELECT * FROM itbdblib/acmkit WHERE GKITFECALT = '20131230' and GKITHORALT >= '10:30:00'
+
+     SELECT * FROM qs36f/genprosl WHERE FCHSOL = 20140102
+
+     SELECT A.ACLINO, A.ACLIGTEID FROM COREDBDB2/CLMCLI AS A INNER JOIN COREDBDB2/NUTGTE AS B ON A.ACLIGTEID = B.BGTEID WHERE A.ACLINO IN
+(30643, 2686428, 4031910, 920264, 1124049, 3006498, 2420206, 333914, 2869738, 287391, 1310564, 3053747, 3053932, 3003136,
+3005847, 3005894, 3022867, 3053932, 955567, 2876838, 3023197,3053946, 3023223) AND B.BGTEAREID = 23
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (10,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (11,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (12,0)
+
+INSERT INTO csgarantia.GrMNum (IdProGNr,UltProGNr) values (13,0)
+
+///////////Ver que Hace un Storeprocedure 
+DSPPGM
+STRPDM
+
+
