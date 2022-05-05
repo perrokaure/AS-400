@@ -973,3 +973,9 @@ MBROPT(*ALL) ALWOBJDIF(*ALL)
 RSTOBJ OBJ(*ALL) SAVLIB(TMPCSDB) DEV(*SAVF) SAVF(AGALEANA/PASAR) MBROPT(*ALL) ALWOBJDIF(*ALL) RSTLIB(PROTDB)    
 
 
+
+
+
+CRTSAVF (Crear Archivo Salvar)
+Fuente:
+https://www.ibm.com/docs/es/i/7.2?topic=ssw_ibm_i_72/cl/crtsavf.htm
