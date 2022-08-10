@@ -986,3 +986,33 @@ https://www.ibm.com/docs/es/i/7.2?topic=ssw_ibm_i_72/cl/crtsavf.htm
 
 SBMJOB CMD(CPYF FROMFILE(TEMPORAL/HBTRA) TOFILE(PROTDB/HBTRA) MBROPT(*ADD)
  FMTOPT(*MAP *DROP) SRCOPT(*SAME)) JOB(HBTRA)               
+
+
+
+******************************************************************************************************************
+Como Saber en que lugar, se emenciona o invica a un proceso rpg 
+
+- STRPDM
+- Opcion 3
+- Archivo QCLSRC 
+- Biblioteca FUENTES 
+
+en opcion 25 luego SHIT + F1 luego enter y agregar nombre del programa a buscar 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
